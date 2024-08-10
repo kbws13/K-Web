@@ -1,3 +1,3 @@
-module K-Web
+module KWeb
 
 go 1.19

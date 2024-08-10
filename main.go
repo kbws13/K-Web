@@ -1,7 +1,7 @@
-package K_Web
+package main
 
 import (
-	"K-Web/framework"
+	"KWeb/framework"
 	"net/http"
 )
 
@@ -12,7 +12,7 @@ func main() {
 		// 自定义的请求处理函数
 		Handler: core,
 		// 请求监听地址
-		Addr: "localhost:8080",
+		Addr: ":8888",
 	}
 	server.ListenAndServe()
 }

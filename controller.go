@@ -1,7 +1,7 @@
-package K_Web
+package main
 
 import (
-	"K-Web/framework"
+	"KWeb/framework"
 	"context"
 	"fmt"
 	"log"
