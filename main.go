@@ -1,8 +1,7 @@
 package main
 
 import (
-	"KWeb/framework"
-	"KWeb/framework/middleware"
+	"KWeb/framework/gin"
 	"context"
 	"log"
 	"net/http"
@@ -13,9 +12,8 @@ import (
 )
 
 func main() {
-	core := framework.NewCore()
-	core.Use(middleware.Recovery())
-	core.Use(middleware.Cost())
+	core := gin.New()
+	core.Use(gin.Recovery())
 
 	registerRouter(core)
 	server := &http.Server{
