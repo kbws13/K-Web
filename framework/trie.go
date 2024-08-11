@@ -17,8 +17,8 @@ type node struct {
 	isLast bool
 	// uri 中的字符串
 	segment string
-	// 控制器
-	handler ControllerHandler
+	// 中间件+控制器
+	handlers []ControllerHandler
 	// 子节点
 	childs []*node
 }
@@ -113,7 +113,7 @@ func (n *node) matchNode(uri string) *node {
 /:user/name
 /:user/name/:age (冲突)
 */
-func (tree *Tree) AddRouter(uri string, handler ControllerHandler) error {
+func (tree *Tree) AddRouter(uri string, handlers []ControllerHandler) error {
 	n := tree.root
 	if n.matchNode(uri) != nil {
 		return errors.New("route exist: " + uri)
@@ -149,7 +149,7 @@ func (tree *Tree) AddRouter(uri string, handler ControllerHandler) error {
 			cnode.segment = segment
 			if isLast {
 				cnode.isLast = true
-				cnode.handler = handler
+				cnode.handlers = handlers
 			}
 			n.childs = append(n.childs, cnode)
 			objNode = cnode
@@ -162,10 +162,10 @@ func (tree *Tree) AddRouter(uri string, handler ControllerHandler) error {
 }
 
 // FindHandler 匹配uri
-func (tree *Tree) FindHandler(uri string) ControllerHandler {
+func (tree *Tree) FindHandler(uri string) []ControllerHandler {
 	matchNode := tree.root.matchNode(uri)
 	if matchNode == nil {
 		return nil
 	}
-	return matchNode.handler
+	return matchNode.handlers
 }
