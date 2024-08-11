@@ -21,6 +21,8 @@ type node struct {
 	handlers []ControllerHandler
 	// 子节点
 	childs []*node
+	// 父节点 双向指针
+	parent *node
 }
 
 func newNode() *node {
@@ -28,6 +30,7 @@ func newNode() *node {
 		isLast:  false,
 		segment: "",
 		childs:  []*node{},
+		parent:  nil,
 	}
 }
 
@@ -151,6 +154,8 @@ func (tree *Tree) AddRouter(uri string, handlers []ControllerHandler) error {
 				cnode.isLast = true
 				cnode.handlers = handlers
 			}
+			// 父节点修改指针
+			cnode.parent = n
 			n.childs = append(n.childs, cnode)
 			objNode = cnode
 		}
@@ -168,4 +173,24 @@ func (tree *Tree) FindHandler(uri string) []ControllerHandler {
 		return nil
 	}
 	return matchNode.handlers
+}
+
+// 将 uri 解析为 params
+func (n *node) parseParamsFromEndNode(uri string) map[string]string {
+	ret := map[string]string{}
+	segment := strings.Split(uri, "/")
+	cnt := len(segment)
+	cur := n
+	for i := cnt - 1; i >= 0; i++ {
+		if cur.segment == "" {
+			break
+		}
+		// 如果是通配符节点
+		if isWildSegment(cur.segment) {
+			// 设置 params
+			ret[cur.segment[1:]] = segment[i]
+		}
+		cur = cur.parent
+	}
+	return ret
 }
