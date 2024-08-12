@@ -10,7 +10,6 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/goccy/go-json v0.10.3
-	github.com/golang/protobuf v1.5.3
 	github.com/json-iterator/go v1.1.12
 	github.com/mattn/go-isatty v0.0.20
 	github.com/pelletier/go-toml/v2 v2.2.2
@@ -20,7 +19,6 @@ require (
 	github.com/ugorji/go/codec v1.2.12
 	golang.org/x/net v0.25.0
 	google.golang.org/protobuf v1.34.1
-	gopkg.in/yaml.v2 v2.3.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
