@@ -1,8 +1,8 @@
 package main
 
 import (
+	"KWeb/app/provider/demo"
 	"KWeb/framework/gin"
-	"KWeb/provider/demo"
 	"fmt"
 )
 
