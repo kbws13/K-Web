@@ -5,6 +5,7 @@
 package gin
 
 import (
+	"KWeb/framework"
 	"errors"
 	"io"
 	"log"
@@ -66,6 +67,9 @@ type Context struct {
 	engine       *Engine
 	params       *Params
 	skippedNodes *[]skippedNode
+
+	// save container
+	container framework.Container
 
 	// This mutex protects Keys map.
 	mu sync.RWMutex

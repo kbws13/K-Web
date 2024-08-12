@@ -2,6 +2,7 @@ package main
 
 import (
 	"KWeb/framework/gin"
+	"KWeb/provider/demo"
 	"fmt"
 )
 
@@ -10,7 +11,11 @@ func SubjectAddController(c *gin.Context) {
 }
 
 func SubjectListController(c *gin.Context) {
-	c.ISetOkStatus().IJson("ok, SubjectListController")
+	// 获取 demo 服务实例
+	demoService := c.MustMake(demo.Key).(demo.Service)
+	// 调用实例方法
+	foo := demoService.GetFoo()
+	c.ISetOkStatus().IJson(foo)
 }
 
 func SubjectDelController(c *gin.Context) {

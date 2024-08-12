@@ -2,6 +2,8 @@ package main
 
 import (
 	"KWeb/framework/gin"
+	"KWeb/framework/middleware"
+	"KWeb/provider/demo"
 	"context"
 	"log"
 	"net/http"
@@ -13,7 +15,11 @@ import (
 
 func main() {
 	core := gin.New()
+	// 绑定具体的服务
+	core.Bind(&demo.DemoServiceProvider{})
+
 	core.Use(gin.Recovery())
+	core.Use(middleware.Cost())
 
 	registerRouter(core)
 	server := &http.Server{

@@ -5,6 +5,7 @@
 package gin
 
 import (
+	"KWeb/framework"
 	"fmt"
 	"html/template"
 	"net"
@@ -93,6 +94,9 @@ const (
 // Create an instance of Engine, by using New() or Default()
 type Engine struct {
 	RouterGroup
+
+	// container
+	container framework.Container
 
 	// RedirectTrailingSlash enables automatic redirection if the current route can't be matched but a
 	// handler for the path with (without) the trailing slash exists.
@@ -193,6 +197,8 @@ var _ IRouter = (*Engine)(nil)
 func New(opts ...OptionFunc) *Engine {
 	debugPrintWARNINGNew()
 	engine := &Engine{
+		// Inject into container
+		container: framework.NewKContainer(),
 		RouterGroup: RouterGroup{
 			Handlers: nil,
 			basePath: "/",
@@ -242,7 +248,7 @@ func (engine *Engine) Handler() http.Handler {
 func (engine *Engine) allocateContext(maxParams uint16) *Context {
 	v := make(Params, 0, maxParams)
 	skippedNodes := make([]skippedNode, 0, engine.maxSections)
-	return &Context{engine: engine, params: &v, skippedNodes: &skippedNodes}
+	return &Context{engine: engine, params: &v, skippedNodes: &skippedNodes, container: engine.container}
 }
 
 // Delims sets template left and right delims and returns an Engine instance.
