@@ -22,6 +22,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/robfig/cron/v3"
 	"io"
 	"os"
 	"path/filepath"
@@ -63,6 +64,12 @@ type Command struct {
 
 	// Service Container
 	container framework.Container
+
+	// Command 支持 cron，只在 RootCommand 中有这个值
+	Cron *cron.Cron
+
+	// 对应Cron命令的说明文档
+	CronSpecs []CronSpec
 
 	// Aliases is an array of aliases that can be used instead of the first word in Use.
 	Aliases []string
