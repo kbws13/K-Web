@@ -1,50 +1,25 @@
 package main
 
 import (
-	"KWeb/app/provider/demo"
-	"KWeb/framework/gin"
-	"KWeb/framework/middleware"
+	"KWeb/app/console"
+	"KWeb/app/http"
+	"KWeb/framework"
 	"KWeb/framework/provider/app"
-	"context"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
+	"KWeb/framework/provider/kernel"
 )
 
 func main() {
-	core := gin.New()
-	// 绑定具体的服务
-	core.Bind(&app.KAppProvider{})
-	core.Bind(&demo.DemoProvider{})
+	// 初始化容器服务
+	container := framework.NewKContainer()
+	// 绑定 APP 服务提供者
+	container.Bind(&app.KAppProvider{})
+	// 后续初始化需要绑定的服务提供者...
 
-	core.Use(gin.Recovery())
-	core.Use(middleware.Cost())
-
-	registerRouter(core)
-	server := &http.Server{
-		// 自定义的请求处理函数
-		Handler: core,
-		// 请求监听地址
-		Addr: ":8888",
+	// 将HTTP引擎初始化,并且作为服务提供者绑定到服务容器中
+	if engine, err := http.NewHttpEngine(); err == nil {
+		container.Bind(&kernel.KKernelProvider{HttpEngine: engine})
 	}
-	go func() {
-		server.ListenAndServe()
-	}()
-	// 当前的 goroutine 等待信号量
-	quit := make(chan os.Signal)
-	// 监控信号：SIGINT, SIGTERM, SIGQUIT
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-	// 这里会阻塞当前 goroutine 等待信号
-	<-quit
 
-	// 调用Server.Shutdown graceful结束
-	timeoutCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := server.Shutdown(timeoutCtx); err != nil {
-		log.Fatal("Server Shutdown:", err)
-	}
+	// 运行root命令
+	console.RunCommand(container)
 }

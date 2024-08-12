@@ -1,6 +1,7 @@
 package demo
 
 import (
+	demoService "KWeb/app/provider/demo"
 	"KWeb/framework/contract"
 	"KWeb/framework/gin"
 )
