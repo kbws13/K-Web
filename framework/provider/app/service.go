@@ -14,7 +14,7 @@ type KApp struct {
 	container  framework.Container // 服务容器
 	baseFolder string              // 基础路径
 	appId      string              // 表示当前这个app的唯一id, 可以用于分布式锁等
-	configMap  map[string]string   // 配置架子啊
+	configMap  map[string]string   // 配置加载
 }
 
 // AppID 表示这个App的唯一ID
@@ -134,5 +134,7 @@ func NewKApp(params ...interface{}) (interface{}, error) {
 }
 
 func (app *KApp) LoadAppConfig(kv map[string]string) {
-	app.configMap = kv
+	for key, val := range kv {
+		app.configMap[key] = val
+	}
 }

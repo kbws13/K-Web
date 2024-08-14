@@ -8,46 +8,88 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cast"
 	"gopkg.in/yaml.v3"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 )
 
 type KConfig struct {
-	c framework.Container
-
-	folder   string
-	env      string
-	keyDelim string
-
-	// envMap
-	envMaps  map[string]string
-	confMaps map[string]interface{}
-	confRaws map[string][]byte
+	c        framework.Container    // 容器
+	folder   string                 // 文件夹
+	keyDelim string                 // 路径分隔符
+	lock     sync.RWMutex           // 配置文件读写锁
+	envMaps  map[string]string      // 所有的环境变量
+	confMaps map[string]interface{} // 配置文件结构，key为文件名
+	confRaws map[string][]byte      // 配置文件的原始信息
 }
 
-func NewKConfig(params ...interface{}) (interface{}, error) {
-	if len(params) != 4 {
-		return nil, errors.New("NewKConfig params error")
+// 读取某个配置文件
+func (conf *KConfig) loadConfigFile(folder string, file string) error {
+	conf.lock.Lock()
+	defer conf.lock.Unlock()
+
+	//  判断文件是否以yaml或者yml作为后缀
+	s := strings.Split(file, ".")
+	if len(s) == 2 && (s[1] == "yaml" || s[1] == "yml") {
+		name := s[0]
+
+		// 读取文件内容
+		bf, err := ioutil.ReadFile(filepath.Join(folder, file))
+		if err != nil {
+			return err
+		}
+		// 直接针对文本做环境变量的替换
+		bf = replace(bf, conf.envMaps)
+		// 解析对应的文件
+		c := map[string]interface{}{}
+		if err := yaml.Unmarshal(bf, &c); err != nil {
+			return err
+		}
+		conf.confMaps[name] = c
+		conf.confRaws[name] = bf
+
+		// 读取app.path中的信息，更新app对应的folder
+		if name == "app" && conf.c.IsBind(contract.AppKey) {
+			if p, ok := c["path"]; ok {
+				appService := conf.c.MustMake(contract.AppKey).(contract.App)
+				appService.LoadAppConfig(cast.ToStringMapString(p))
+			}
+		}
 	}
+	return nil
+}
 
-	folder := params[0].(string)
-	envMaps := params[1].(map[string]string)
-	env := params[2].(string)
+// 删除文件的操作
+func (conf *KConfig) removeConfigFile(folder string, file string) error {
+	conf.lock.Lock()
+	defer conf.lock.Unlock()
+	s := strings.Split(file, ".")
+	// 只有yaml或者yml后缀才执行
+	if len(s) == 2 && (s[1] == "yaml" || s[1] == "yml") {
+		name := s[0]
+		// 删除内存中对应的key
+		delete(conf.confRaws, name)
+		delete(conf.confMaps, name)
+	}
+	return nil
+}
 
-	c := params[3].(framework.Container)
-
-	envFolder := filepath.Join(folder, env)
+// NewKConfig 初始化方法
+func NewKConfig(params ...interface{}) (interface{}, error) {
+	container := params[0].(framework.Container)
+	envFolder := params[1].(string)
+	envMaps := params[2].(map[string]string)
 	// check folder exist
 	if _, err := os.Stat(envFolder); os.IsNotExist(err) {
 		return nil, errors.New("folder " + envFolder + " not exist: " + err.Error())
 	}
 
 	kConf := &KConfig{
-		c:        c,
-		folder:   folder,
-		env:      env,
+		c:        container,
+		folder:   envFolder,
 		keyDelim: ".",
 		envMaps:  envMaps,
 		confMaps: map[string]interface{}{},
@@ -83,9 +125,9 @@ func NewKConfig(params ...interface{}) (interface{}, error) {
 	}
 
 	// init app path
-	if kConf.IsExist("app.path") && c.IsBind(contract.AppKey) {
+	if kConf.IsExist("app.path") && container.IsBind(contract.AppKey) {
 		appPaths := kConf.GetStringMapString("app.path")
-		appService := c.MustMake(contract.AppKey).(contract.App)
+		appService := container.MustMake(contract.AppKey).(contract.App)
 		appService.LoadAppConfig(appPaths)
 	}
 	return kConf, nil

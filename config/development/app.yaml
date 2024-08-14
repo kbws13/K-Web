@@ -5,7 +5,5 @@ swagger_open: true
 dev_fresh: 1
 
 path:
-  storage: "/kweb_sts/testdata/storage/"
-  log: ""
-  pid: ""
-  cache: ""
+  log_folder: "D:/Data/KWeb/storage/log/"
+  runtime_folder: "D:/Data/KWeb/storage/runtime/"

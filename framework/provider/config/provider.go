@@ -3,15 +3,10 @@ package config
 import (
 	"KWeb/framework"
 	"KWeb/framework/contract"
+	"path/filepath"
 )
 
-type KConfigProvider struct {
-	c      framework.Container
-	folder string
-	env    string
-
-	envMaps map[string]string
-}
+type KConfigProvider struct{}
 
 // Register a new function for make a service instance
 func (provider *KConfigProvider) Register(c framework.Container) framework.NewInstance {
@@ -20,10 +15,6 @@ func (provider *KConfigProvider) Register(c framework.Container) framework.NewIn
 
 // Boot will called when the service instantiate
 func (provider *KConfigProvider) Boot(c framework.Container) error {
-	provider.folder = c.MustMake(contract.AppKey).(contract.App).ConfigFolder()
-	provider.envMaps = c.MustMake(contract.EnvKey).(contract.Env).All()
-	provider.env = c.MustMake(contract.EnvKey).(contract.Env).AppEnv()
-	provider.c = c
 	return nil
 }
 
@@ -34,7 +25,12 @@ func (provider *KConfigProvider) IsDefer() bool {
 
 // Params define the necessary params for NewInstance
 func (provider *KConfigProvider) Params(c framework.Container) []interface{} {
-	return []interface{}{provider.folder, provider.envMaps, provider.env, provider.c}
+	appService := c.MustMake(contract.AppKey).(contract.App)
+	envService := c.MustMake(contract.EnvKey).(contract.Env)
+	env := envService.AppEnv()
+	configFolder := appService.ConfigFolder()
+	envFolder := filepath.Join(configFolder, env)
+	return []interface{}{c, envFolder, envService.All()}
 }
 
 // Name define the name for this service

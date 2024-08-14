@@ -4,10 +4,12 @@ import "KWeb/framework/cobra"
 
 // AddKernelCommands will add all command/* to root command
 func AddKernelCommands(root *cobra.Command) {
-	// app
+	// app 命令
 	root.AddCommand(initAppCommand())
-	// env
+	// env 命令
 	root.AddCommand(envCommand)
-	// cron
-	//root.AddCommand(initCronCommand())
+	// cron 命令
+	root.AddCommand(initCronCommand())
+	// config 命令
+	root.AddCommand(initConfigCommand())
 }
