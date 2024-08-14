@@ -17,6 +17,7 @@ Cobra is a library providing a simple interface to create powerful modern CLI
 interfaces similar to git & go tools.
 
 Cobra provides:
+
 * Easy subcommand-based CLIs: `app server`, `app fetch`, etc.
 * Fully POSIX-compliant flags (including short & long versions)
 * Nested subcommands
@@ -42,7 +43,7 @@ intuitively know how to interact with them.
 
 The pattern to follow is
 `APPNAME VERB NOUN --ADJECTIVE`
-    or
+or
 `APPNAME COMMAND ARG --FLAG`.
 
 A few good real world examples may better illustrate this point.
@@ -79,6 +80,7 @@ library](https://github.com/spf13/pflag), a fork of the flag standard library
 which maintains the same interface while adding POSIX compliance.
 
 # Installing
+
 Using Cobra is easy. First, use `go get` to install the latest version
 of the library.
 
@@ -93,6 +95,7 @@ import "github.com/spf13/cobra"
 ```
 
 # Usage
+
 `cobra-cli` is a command line program to generate cobra applications and command files.
 It will bootstrap your application scaffolding to rapidly
 develop a Cobra-based application. It is the easiest way to incorporate Cobra into your application.
@@ -103,7 +106,8 @@ It can be installed by running:
 go install github.com/spf13/cobra-cli@latest
 ```
 
-For complete details on using the Cobra-CLI generator, please read [The Cobra Generator README](https://github.com/spf13/cobra-cli/blob/main/README.md)
+For complete details on using the Cobra-CLI generator, please
+read [The Cobra Generator README](https://github.com/spf13/cobra-cli/blob/main/README.md)
 
 For complete details on using the Cobra library, please read the [The Cobra User Guide](site/content/user_guide.md).
 

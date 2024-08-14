@@ -10,7 +10,7 @@ type KAppProvider struct {
 	BaseFolder string
 }
 
-// Register 注册HadeApp方法
+// Register 注册KApp方法
 func (h *KAppProvider) Register(container framework.Container) framework.NewInstance {
 	return NewKApp
 }

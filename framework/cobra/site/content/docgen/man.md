@@ -18,7 +18,7 @@ func main() {
 		Short: "my test program",
 	}
 	header := &doc.GenManHeader{
-		Title: "MINE",
+		Title:   "MINE",
 		Section: "3",
 	}
 	err := doc.GenManTree(cmd, header, "/tmp")

@@ -6,6 +6,8 @@ import "KWeb/framework/cobra"
 func AddKernelCommands(root *cobra.Command) {
 	// app
 	root.AddCommand(initAppCommand())
+	// env
+	root.AddCommand(envCommand)
 	// cron
-	root.AddCommand(initCronCommand())
+	//root.AddCommand(initCronCommand())
 }

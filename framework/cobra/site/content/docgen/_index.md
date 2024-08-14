@@ -6,6 +6,7 @@
 - [Yaml docs](yaml.md)
 
 ## Options
+
 ### `DisableAutoGenTag`
 
 You may set `cmd.DisableAutoGenTag = true`

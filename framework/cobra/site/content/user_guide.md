@@ -32,7 +32,8 @@ func main() {
 Cobra-CLI is its own program that will create your application and add any commands you want.
 It's the easiest way to incorporate Cobra into your application.
 
-For complete details on using the Cobra generator, please refer to [The Cobra-CLI Generator README](https://github.com/spf13/cobra-cli/blob/main/README.md)
+For complete details on using the Cobra generator, please refer
+to [The Cobra-CLI Generator README](https://github.com/spf13/cobra-cli/blob/main/README.md)
 
 ## Using the Cobra Library
 
@@ -336,7 +337,8 @@ rootCmd.MarkPersistentFlagRequired("region")
 
 ### Flag Groups
 
-If you have different flags that must be provided together (e.g. if they provide the `--username` flag they MUST provide the `--password` flag as well) then
+If you have different flags that must be provided together (e.g. if they provide the `--username` flag they MUST provide
+the `--password` flag as well) then
 Cobra can enforce that requirement:
 
 ```go
@@ -365,10 +367,11 @@ rootCmd.MarkFlagsMutuallyExclusive("json", "yaml")
 ```
 
 In these cases:
-  - both local and persistent flags can be used
+
+- both local and persistent flags can be used
     - **NOTE:** the group is only enforced on commands where every flag is defined
-  - a flag may appear in multiple groups
-  - a group may contain any number of flags
+- a flag may appear in multiple groups
+- a group may contain any number of flags
 
 ## Positional and Custom Arguments
 
@@ -376,14 +379,15 @@ Validation of positional arguments can be specified using the `Args` field of `C
 The following validators are built in:
 
 - Number of arguments:
-  - `NoArgs` - report an error if there are any positional args.
-  - `ArbitraryArgs` - accept any number of args.
-  - `MinimumNArgs(int)` - report an error if less than N positional args are provided.
-  - `MaximumNArgs(int)` - report an error if more than N positional args are provided.
-  - `ExactArgs(int)` - report an error if there are not exactly N positional args.
-  - `RangeArgs(min, max)` - report an error if the number of args is not between `min` and `max`.
+    - `NoArgs` - report an error if there are any positional args.
+    - `ArbitraryArgs` - accept any number of args.
+    - `MinimumNArgs(int)` - report an error if less than N positional args are provided.
+    - `MaximumNArgs(int)` - report an error if more than N positional args are provided.
+    - `ExactArgs(int)` - report an error if there are not exactly N positional args.
+    - `RangeArgs(min, max)` - report an error if the number of args is not between `min` and `max`.
 - Content of the arguments:
-  - `OnlyValidArgs` - report an error if there are any positional args not specified in the `ValidArgs` field of `Command`, which can optionally be set to a list of valid values for positional args.
+    - `OnlyValidArgs` - report an error if there are any positional args not specified in the `ValidArgs` field of
+      `Command`, which can optionally be set to a list of valid values for positional args.
 
 If `Args` is undefined or `nil`, it defaults to `ArbitraryArgs`.
 
@@ -501,7 +505,7 @@ Cobra automatically adds a help command to your application when you have subcom
 This will be called when a user runs 'app help'. Additionally, help will also
 support all other commands as input. Say, for instance, you have a command called
 'create' without any additional configuration; Cobra will work when 'app help
-create' is called.  Every command will automatically have the '--help' flag added.
+create' is called. Every command will automatically have the '--help' flag added.
 
 ### Example
 
@@ -532,16 +536,15 @@ command and flag definitions are needed.
 
     Use "cobra-cli [command] --help" for more information about a command.
 
-
 Help is just a command like any other. There is no special logic or behavior
 around it. In fact, you can provide your own if you want.
 
 ### Grouping commands in help
 
-Cobra supports grouping of available commands in the help output.  To group commands, each group must be explicitly
-defined using `AddGroup()` on the parent command.  Then a subcommand can be added to a group using the `GroupID` element
+Cobra supports grouping of available commands in the help output. To group commands, each group must be explicitly
+defined using `AddGroup()` on the parent command. Then a subcommand can be added to a group using the `GroupID` element
 of that subcommand. The groups will appear in the help output in the same order as they are defined using different
-calls to `AddGroup()`.  If you use the generated `help` or `completion` commands, you can set their group ids using
+calls to `AddGroup()`. If you use the generated `help` or `completion` commands, you can set their group ids using
 `SetHelpCommandGroupId()` and `SetCompletionCommandGroupId()` on the root command, respectively.
 
 ### Defining your own help
@@ -563,6 +566,7 @@ When the user provides an invalid flag or invalid command, Cobra responds by
 showing the user the 'usage'.
 
 ### Example
+
 You may recognize this from the help above. That's because the default help
 embeds the usage as part of its output.
 
@@ -587,6 +591,7 @@ embeds the usage as part of its output.
     Use "cobra [command] --help" for more information about a command.
 
 ### Defining your own usage
+
 You can provide your own usage function or template for Cobra to use.
 Like help, the function and template are overridable through public methods:
 
@@ -610,7 +615,11 @@ The Prefix, `Error:` can be customized using the `cmd.SetErrPrefix(s string)` fu
 
 ## PreRun and PostRun Hooks
 
-It is possible to run functions before or after the main `Run` function of your command. The `PersistentPreRun` and `PreRun` functions will be executed before `Run`. `PersistentPostRun` and `PostRun` will be executed after `Run`.  The `Persistent*Run` functions will be inherited by children if they do not declare their own.  The `*PreRun` and `*PostRun` functions will only be executed if the `Run` function of the current command has been declared.  These functions are run in the following order:
+It is possible to run functions before or after the main `Run` function of your command. The `PersistentPreRun` and
+`PreRun` functions will be executed before `Run`. `PersistentPostRun` and `PostRun` will be executed after `Run`. The
+`Persistent*Run` functions will be inherited by children if they do not declare their own. The `*PreRun` and `*PostRun`
+functions will only be executed if the `Run` function of the current command has been declared. These functions are run
+in the following order:
 
 - `PersistentPreRun`
 - `PreRun`
@@ -618,7 +627,8 @@ It is possible to run functions before or after the main `Run` function of your 
 - `PostRun`
 - `PersistentPostRun`
 
-An example of two commands which use all of these features is below.  When the subcommand is executed, it will run the root command's `PersistentPreRun` but not the root command's `PersistentPostRun`:
+An example of two commands which use all of these features is below. When the subcommand is executed, it will run the
+root command's `PersistentPreRun` but not the root command's `PersistentPostRun`:
 
 ```go
 package main
@@ -679,6 +689,7 @@ func main() {
 ```
 
 Output:
+
 ```
 Inside rootCmd PersistentPreRun with args: []
 Inside rootCmd PreRun with args: []
@@ -699,7 +710,8 @@ Set `EnableTraverseRunHooks` global variable to `true` if you want to execute al
 
 ## Suggestions when "unknown command" happens
 
-Cobra will print automatic suggestions when "unknown command" errors happen. This allows Cobra to behave similarly to the `git` command when a typo happens. For example:
+Cobra will print automatic suggestions when "unknown command" errors happen. This allows Cobra to behave similarly to
+the `git` command when a typo happens. For example:
 
 ```
 $ hugo srever
@@ -711,7 +723,9 @@ Did you mean this?
 Run 'hugo --help' for usage.
 ```
 
-Suggestions are automatically generated based on existing subcommands and use an implementation of [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance). Every registered command that matches a minimum distance of 2 (ignoring case) will be displayed as a suggestion.
+Suggestions are automatically generated based on existing subcommands and use an implementation
+of [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance). Every registered command that matches a
+minimum distance of 2 (ignoring case) will be displayed as a suggestion.
 
 If you need to disable suggestions or tweak the string distance in your command, use:
 
@@ -725,7 +739,9 @@ or
 command.SuggestionsMinimumDistance = 1
 ```
 
-You can also explicitly set names for which a given command will be suggested using the `SuggestFor` attribute. This allows suggestions for strings that are not close in terms of string distance, but make sense in your set of commands but for which
+You can also explicitly set names for which a given command will be suggested using the `SuggestFor` attribute. This
+allows suggestions for strings that are not close in terms of string distance, but make sense in your set of commands
+but for which
 you don't want aliases. Example:
 
 ```bash

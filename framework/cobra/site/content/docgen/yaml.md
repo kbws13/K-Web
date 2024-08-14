@@ -53,11 +53,13 @@ func main() {
 }
 ```
 
-This will generate a whole series of files, one for each command in the tree, in the directory specified (in this case "./")
+This will generate a whole series of files, one for each command in the tree, in the directory specified (in this
+case "./")
 
 ## Generate yaml docs for a single command
 
-You may wish to have more control over the output, or only generate for a single command, instead of the entire command tree. If this is the case you may prefer to `GenYaml` instead of `GenYamlTree`
+You may wish to have more control over the output, or only generate for a single command, instead of the entire command
+tree. If this is the case you may prefer to `GenYaml` instead of `GenYamlTree`
 
 ```go
 	out := new(bytes.Buffer)
@@ -82,7 +84,8 @@ func GenYamlCustom(cmd *Command, out *bytes.Buffer, linkHandler func(string) str
 }
 ```
 
-The `filePrepender` will prepend the return value given the full filepath to the rendered Yaml file. A common use case is to add front matter to use the generated documentation with [Hugo](https://gohugo.io/):
+The `filePrepender` will prepend the return value given the full filepath to the rendered Yaml file. A common use case
+is to add front matter to use the generated documentation with [Hugo](https://gohugo.io/):
 
 ```go
 const fmTemplate = `---

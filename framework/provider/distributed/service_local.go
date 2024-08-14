@@ -5,7 +5,6 @@ import (
 	"KWeb/framework/contract"
 	"errors"
 	"github.com/gofrs/flock"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"time"
@@ -67,7 +66,7 @@ func (s LocalDistributedService) Select(serviceName string, appID string, holdTi
 	}()
 
 	// 这里已经是抢占到了，将抢占到的appID写入文件
-	if err := ioutil.WriteFile(lockFile, []byte(appID), 0666); err != nil {
+	if err := os.WriteFile(lockFile, []byte(appID), 0666); err != nil {
 		return "", err
 	}
 	return appID, nil

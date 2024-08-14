@@ -32,10 +32,10 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        go: ["1.21", "1.22"]
+        os: [ ubuntu-latest, macos-latest ]
+        go: [ "1.21", "1.22" ]
         test-tags:
-          ["", "-tags nomsgpack", '-tags "sonic avx"', "-tags go_json", "-race"]
+          [ "", "-tags nomsgpack", '-tags "sonic avx"', "-tags go_json", "-race" ]
         include:
           - os: ubuntu-latest
             go-build: ~/.cache/go-build

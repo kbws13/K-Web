@@ -59,10 +59,11 @@ func (kService *KContainer) PrintProviders() []string {
 // Bind 将服务容器和关键字做了绑定
 func (kService *KContainer) Bind(provider ServiceProvider) error {
 	kService.lock.Lock()
-	defer kService.lock.Unlock()
+
 	key := provider.Name()
 
 	kService.providers[key] = provider
+	kService.lock.Unlock()
 
 	// if provider is not defer
 	if provider.IsDefer() == false {
@@ -101,7 +102,7 @@ func (kService *KContainer) Make(key string) (interface{}, error) {
 func (kService *KContainer) MustMake(key string) interface{} {
 	serv, err := kService.make(key, nil, false)
 	if err != nil {
-		panic(err)
+		panic("container not contain key " + key)
 	}
 	return serv
 }

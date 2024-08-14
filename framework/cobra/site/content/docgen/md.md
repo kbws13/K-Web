@@ -53,11 +53,13 @@ func main() {
 }
 ```
 
-This will generate a whole series of files, one for each command in the tree, in the directory specified (in this case "./")
+This will generate a whole series of files, one for each command in the tree, in the directory specified (in this
+case "./")
 
 ## Generate markdown docs for a single command
 
-You may wish to have more control over the output, or only generate for a single command, instead of the entire command tree. If this is the case you may prefer to `GenMarkdown` instead of `GenMarkdownTree`
+You may wish to have more control over the output, or only generate for a single command, instead of the entire command
+tree. If this is the case you may prefer to `GenMarkdown` instead of `GenMarkdownTree`
 
 ```go
 	out := new(bytes.Buffer)
@@ -85,7 +87,8 @@ func GenMarkdownCustom(cmd *Command, out *bytes.Buffer, linkHandler func(string)
 }
 ```
 
-The `filePrepender` will prepend the return value given the full filepath to the rendered Markdown file. A common use case is to add front matter to use the generated documentation with [Hugo](https://gohugo.io/):
+The `filePrepender` will prepend the return value given the full filepath to the rendered Markdown file. A common use
+case is to add front matter to use the generated documentation with [Hugo](https://gohugo.io/):
 
 ```go
 const fmTemplate = `---

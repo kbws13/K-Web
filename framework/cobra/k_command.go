@@ -7,9 +7,10 @@ import (
 )
 
 type CommandSpec struct {
-	Cmd  *Command
-	Args []string
-	Spec string
+	Type        string
+	Cmd         *Command
+	Spec        string
+	ServiceName string
 }
 
 // SetContainer 设置容器

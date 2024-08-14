@@ -13,11 +13,11 @@ import (
 	"time"
 )
 
-var cronDeamon = false
+var cronDaemon = false
 
 func initCronCommand() *cobra.Command {
 
-	cronStartCommand.Flags().BoolVarP(&cronDeamon, "deamon", "d", false, "start serve deamon")
+	cronStartCommand.Flags().BoolVarP(&cronDaemon, "daemon", "d", false, "start serve daemon")
 	cronCommand.AddCommand(cronRestartCommand)
 	cronCommand.AddCommand(cronStateCommand)
 	cronCommand.AddCommand(cronStopCommand)
@@ -47,7 +47,7 @@ var cronListCommand = &cobra.Command{
 		cronSpecs := c.Root().CronSpecs
 		ps := [][]string{}
 		for _, cronSpec := range cronSpecs {
-			line := []string{cronSpec.Spec, cronSpec.Cmd.Use, cronSpec.Cmd.Short}
+			line := []string{cronSpec.Type, cronSpec.Spec, cronSpec.Cmd.Use, cronSpec.Cmd.Short, cronSpec.ServiceName}
 			ps = append(ps, line)
 		}
 		util.PrettyPrint(ps)
@@ -56,46 +56,59 @@ var cronListCommand = &cobra.Command{
 	},
 }
 
+// cron 进程的启动服务
 var cronStartCommand = &cobra.Command{
 	Use:   "start",
 	Short: "启动cron常驻进程",
 	RunE: func(c *cobra.Command, args []string) error {
+		// 获取容器
 		container := c.GetContainer()
+		// 获取容器中的app服务
 		appService := container.MustMake(contract.AppKey).(contract.App)
 
+		// 设置 cron 的日志地址和进程 id 地址
 		pidFolder := appService.RuntimeFolder()
 		serverPidFile := filepath.Join(pidFolder, "cron.pid")
 		logFolder := appService.LogFolder()
 		serverLogFile := filepath.Join(logFolder, "cron.log")
-		currentFolder := util.GetExecDirectory()
-		// deamon mode
-		if cronDeamon {
+		currentFolder := appService.BaseFolder()
+		// daemon mode
+		if cronDaemon {
+			// 创建一条狗 Context
 			cntxt := &daemon.Context{
+				// 设置pid文件
 				PidFileName: serverPidFile,
 				PidFilePerm: 0664,
+				// 设置日志文件
 				LogFileName: serverLogFile,
 				LogFilePerm: 0640,
-				WorkDir:     currentFolder,
-				Umask:       027,
-				Args:        []string{"", "cron", "start", "--deamon=true"},
+				// 设置工作路径
+				WorkDir: currentFolder,
+				// 设置所有设置文件的mask，默认为750
+				Umask: 027,
+				// 子进程的参数，按照这个参数设置，子进程的命令为 ./KWeb cron start --daemon=true
+				Args: []string{"", "cron", "start", "--daemon=true"},
 			}
+			// 启动子进程，d 不为空表示当前是父进程，d为空表示当前是子进程
 			d, err := cntxt.Reborn()
 			if err != nil {
 				return err
 			}
 			if d != nil {
+				// 父进程直接打印启动成功信息，不做任何操作
 				fmt.Println("cron serve started")
 				fmt.Println("log file:", serverLogFile)
 				return nil
 			}
+			// 子进程执行 Cron.Run
 			defer cntxt.Release()
-			fmt.Println("deamon started")
-			gspt.SetProcTitle("hade cron")
+			fmt.Println("daemon started")
+			gspt.SetProcTitle("KWeb cron")
 			c.Root().Cron.Run()
 			return nil
 		}
 
-		// not deamon mode
+		// not daemon mode
 		fmt.Println("start cron job")
 		content := strconv.Itoa(os.Getpid())
 		fmt.Println("[PID]", content)
@@ -104,7 +117,7 @@ var cronStartCommand = &cobra.Command{
 			return err
 		}
 
-		gspt.SetProcTitle("hade cron")
+		gspt.SetProcTitle("KWeb cron")
 		c.Root().Cron.Run()
 		return nil
 	},
@@ -150,7 +163,7 @@ var cronRestartCommand = &cobra.Command{
 			}
 		}
 
-		cronDeamon = true
+		cronDaemon = true
 		return cronStartCommand.RunE(c, args)
 	},
 }

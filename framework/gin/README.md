@@ -11,7 +11,8 @@
 [![Release](https://img.shields.io/github/release/gin-gonic/gin.svg?style=flat-square)](https://github.com/gin-gonic/gin/releases)
 [![TODOs](https://badgen.net/https/api.tickgit.com/badgen/github.com/gin-gonic/gin)](https://www.tickgit.com/browse?repo=github.com/gin-gonic/gin)
 
-Gin is a web framework written in [Go](https://go.dev/). It features a martini-like API with performance that is up to 40 times faster thanks to [httprouter](https://github.com/julienschmidt/httprouter).
+Gin is a web framework written in [Go](https://go.dev/). It features a martini-like API with performance that is up to
+40 times faster thanks to [httprouter](https://github.com/julienschmidt/httprouter).
 If you need performance and good productivity, you will love Gin.
 
 **Gin's key features are:**
@@ -34,7 +35,8 @@ Gin requires [Go](https://go.dev/) version [1.21](https://go.dev/doc/devel/relea
 
 ### Getting Gin
 
-With [Go's module support](https://go.dev/wiki/Modules#how-to-use-modules), `go [build|run|test]` automatically fetches the necessary dependencies when you add the import in your code:
+With [Go's module support](https://go.dev/wiki/Modules#how-to-use-modules), `go [build|run|test]` automatically fetches
+the necessary dependencies when you add the import in your code:
 
 ```sh
 import "github.com/gin-gonic/gin"
@@ -86,7 +88,8 @@ Learn and practice with the [Gin Quick Start](docs/doc.md), which includes API e
 
 #### Examples
 
-A number of ready-to-run examples demonstrating various use cases of Gin are available in the [Gin examples](https://github.com/gin-gonic/examples) repository.
+A number of ready-to-run examples demonstrating various use cases of Gin are available in
+the [Gin examples](https://github.com/gin-gonic/examples) repository.
 
 ## Documentation
 
@@ -109,10 +112,11 @@ The documentation is also available on [gin-gonic.com](https://gin-gonic.com) in
 
 ## Benchmarks
 
-Gin uses a custom version of [HttpRouter](https://github.com/julienschmidt/httprouter), [see all benchmarks](/BENCHMARKS.md).
+Gin uses a custom version
+of [HttpRouter](https://github.com/julienschmidt/httprouter), [see all benchmarks](/BENCHMARKS.md).
 
 | Benchmark name                 |       (1) |             (2) |          (3) |             (4) |
-| ------------------------------ | ---------:| ---------------:| ------------:| ---------------:|
+|--------------------------------|----------:|----------------:|-------------:|----------------:|
 | BenchmarkGin_GithubAll         | **43550** | **27364 ns/op** |   **0 B/op** | **0 allocs/op** |
 | BenchmarkAce_GithubAll         |     40543 |     29670 ns/op |       0 B/op |     0 allocs/op |
 | BenchmarkAero_GithubAll        |     57632 |     20648 ns/op |       0 B/op |     0 allocs/op |
