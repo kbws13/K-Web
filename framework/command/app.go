@@ -38,7 +38,8 @@ var appStartCommand = &cobra.Command{
 		// 从Command中获取服务容器
 		container := c.GetContainer()
 		// 从服务容器中获取kernel的服务实例
-		kernelService := container.MustMake(contract.KernelKey).(contract.Kernel)
+		x := container.MustMake(contract.KernelKey)
+		kernelService := x.(contract.Kernel)
 		// 从kernel服务实例中获取引擎
 		core := kernelService.HttpEngine()
 

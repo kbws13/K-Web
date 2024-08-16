@@ -20,7 +20,7 @@ func (provider *KConfigProvider) Boot(c framework.Container) error {
 
 // IsDefer define whether the service instantiate when first make or register
 func (provider *KConfigProvider) IsDefer() bool {
-	return true
+	return false
 }
 
 // Params define the necessary params for NewInstance

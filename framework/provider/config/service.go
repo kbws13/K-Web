@@ -5,10 +5,12 @@ import (
 	"KWeb/framework/contract"
 	"bytes"
 	"errors"
+	"fmt"
+	"github.com/fsnotify/fsnotify"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cast"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -37,7 +39,7 @@ func (conf *KConfig) loadConfigFile(folder string, file string) error {
 		name := s[0]
 
 		// 读取文件内容
-		bf, err := ioutil.ReadFile(filepath.Join(folder, file))
+		bf, err := os.ReadFile(filepath.Join(folder, file))
 		if err != nil {
 			return err
 		}
@@ -103,33 +105,65 @@ func NewKConfig(params ...interface{}) (interface{}, error) {
 	}
 
 	for _, file := range files {
-		s := strings.Split(file.Name(), ".")
-		if len(s) == 2 && (s[1] == "yaml" || s[1] == "yml") {
-			name := s[0]
-
-			// read file bytes
-			bf, err := os.ReadFile(filepath.Join(envFolder, file.Name()))
-			if err != nil {
-				continue
-			}
-			kConf.confRaws[name] = bf
-			// do replace
-			bf = replace(bf, envMaps)
-			// parse yaml
-			c := map[string]interface{}{}
-			if err := yaml.Unmarshal(bf, &c); err != nil {
-				continue
-			}
-			kConf.confMaps[name] = c
+		fileName := file.Name()
+		err := kConf.loadConfigFile(envFolder, fileName)
+		if err != nil {
+			log.Println(err)
+			continue
 		}
 	}
 
-	// init app path
-	if kConf.IsExist("app.path") && container.IsBind(contract.AppKey) {
-		appPaths := kConf.GetStringMapString("app.path")
-		appService := container.MustMake(contract.AppKey).(contract.App)
-		appService.LoadAppConfig(appPaths)
+	// 监控文件夹文件
+	watch, err := fsnotify.NewWatcher()
+	if err != nil {
+		return nil, err
 	}
+	err = watch.Add(envFolder)
+	if err != nil {
+		return nil, err
+	}
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				fmt.Println(err)
+			}
+		}()
+
+		for {
+			select {
+			case ev := <-watch.Events:
+				{
+					//判断事件发生的类型
+					// Create 创建
+					// Write 写入
+					// Remove 删除
+					path, _ := filepath.Abs(ev.Name)
+					index := strings.LastIndex(path, string(os.PathSeparator))
+					folder := path[:index]
+					fileName := path[index+1:]
+
+					if ev.Op&fsnotify.Create == fsnotify.Create {
+						log.Println("创建文件 : ", ev.Name)
+						kConf.loadConfigFile(folder, fileName)
+					}
+					if ev.Op&fsnotify.Write == fsnotify.Write {
+						log.Println("写入文件 : ", ev.Name)
+						kConf.loadConfigFile(folder, fileName)
+					}
+					if ev.Op&fsnotify.Remove == fsnotify.Remove {
+						log.Println("删除文件 : ", ev.Name)
+						kConf.removeConfigFile(folder, fileName)
+					}
+				}
+			case err := <-watch.Errors:
+				{
+					log.Println("error : ", err)
+					return
+				}
+			}
+		}
+	}()
+
 	return kConf, nil
 }
 
@@ -175,6 +209,8 @@ func searchMap(source map[string]interface{}, path []string) interface{} {
 }
 
 func (conf *KConfig) find(key string) interface{} {
+	conf.lock.RLock()
+	defer conf.lock.RUnlock()
 	return searchMap(conf.confMaps, strings.Split(key, conf.keyDelim))
 }
 
@@ -240,5 +276,13 @@ func (conf *KConfig) GetStringMapStringSlice(key string) map[string][]string {
 
 // Load a config to a struct, val should be an pointer
 func (conf *KConfig) Load(key string, val interface{}) error {
-	return mapstructure.Decode(conf.find(key), val)
+	decoder, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
+		TagName: "yaml",
+		Result:  val,
+	})
+	if err != nil {
+		return err
+	}
+
+	return decoder.Decode(conf.find(key))
 }

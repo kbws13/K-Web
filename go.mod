@@ -8,6 +8,7 @@ require (
 	github.com/bytedance/sonic v1.12.1
 	github.com/cpuguy83/go-md2man/v2 v2.0.4
 	github.com/erikdubbelboer/gspt v0.0.0-20210805194459-ce36a5128377
+	github.com/fsnotify/fsnotify v1.4.9
 	github.com/gin-contrib/sse v0.1.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator/v10 v10.20.0
@@ -16,6 +17,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/inconshreveable/mousetrap v1.1.0
 	github.com/json-iterator/go v1.1.12
+	github.com/kr/pretty v0.3.1
 	github.com/mattn/go-isatty v0.0.20
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pelletier/go-toml/v2 v2.2.2
