@@ -2,6 +2,7 @@ package kernel
 
 import (
 	"KWeb/framework/gin"
+	"net/http"
 )
 
 // KKernelService 引擎服务
@@ -16,6 +17,6 @@ func NewKKernelService(params ...interface{}) (interface{}, error) {
 }
 
 // HttpEngine 返回web引擎
-func (s *KKernelService) HttpEngine() *gin.Engine {
+func (s *KKernelService) HttpEngine() http.Handler {
 	return s.engine
 }

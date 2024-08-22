@@ -6,13 +6,6 @@ import (
 	"log"
 )
 
-type CommandSpec struct {
-	Type        string
-	Cmd         *Command
-	Spec        string
-	ServiceName string
-}
-
 // SetContainer 设置容器
 func (c *Command) SetContainer(container framework.Container) {
 	c.container = container
