@@ -12,8 +12,12 @@ import (
 	"time"
 )
 
+// app启动地址
+var appAddress = ""
+
 // initAppCommand 初始化app命令和其子命令
 func initAppCommand() *cobra.Command {
+	appStartCommand.Flags().StringVar(&appAddress, "address", ":8888", "设置app启动的地址，默认为:8888")
 	appCommand.AddCommand(appStartCommand)
 	return appCommand
 }
@@ -38,15 +42,14 @@ var appStartCommand = &cobra.Command{
 		// 从Command中获取服务容器
 		container := c.GetContainer()
 		// 从服务容器中获取kernel的服务实例
-		x := container.MustMake(contract.KernelKey)
-		kernelService := x.(contract.Kernel)
+		kernelService := container.MustMake(contract.KernelKey).(contract.Kernel)
 		// 从kernel服务实例中获取引擎
 		core := kernelService.HttpEngine()
 
 		// 创建一个Server服务
 		server := &http.Server{
 			Handler: core,
-			Addr:    ":8888",
+			Addr:    appAddress,
 		}
 
 		// 这个goroutine是启动服务的goroutine

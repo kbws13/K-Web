@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"runtime"
 )
 
 // build 相关的命令
@@ -36,7 +37,13 @@ var buildSelfCommand = &cobra.Command{
 			log.Fatalln("K-Web go: please install go in path first")
 		}
 
-		cmd := exec.Command(path, "build", "-o", "K-Web", "./")
+		// 根据操作系统设置输出文件名
+		outputFile := "K-Web"
+		if runtime.GOOS == "windows" {
+			outputFile += ".exe"
+		}
+
+		cmd := exec.Command(path, "build", "-o", outputFile, "./")
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			fmt.Println("go build error:")
@@ -44,7 +51,7 @@ var buildSelfCommand = &cobra.Command{
 			fmt.Println("--------------")
 			return err
 		}
-		fmt.Println("build success please run ./K-Web direct")
+		fmt.Printf("build success please run ./%s directly\n", outputFile)
 		return nil
 	},
 }

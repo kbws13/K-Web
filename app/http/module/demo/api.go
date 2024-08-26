@@ -2,7 +2,6 @@ package demo
 
 import (
 	demoService "KWeb/app/provider/demo"
-	"KWeb/framework/contract"
 	"KWeb/framework/gin"
 )
 
@@ -33,10 +32,7 @@ func NewDemoApi() *DemoApi {
 // @Success 200 array []UserDTO
 // @Router /demo/demo [get]
 func (api *DemoApi) Demo(c *gin.Context) {
-	// 获取 password
-	configService := c.MustMake(contract.ConfigKey).(contract.Config)
-	password := configService.GetString("database.mysql.password")
-	c.JSON(200, password)
+	c.JSON(200, "this is demo")
 }
 
 // Demo godoc
