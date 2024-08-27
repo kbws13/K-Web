@@ -1,6 +1,7 @@
 package http
 
 import (
+	"KWeb/app/http/middleware/cors"
 	"KWeb/app/http/module/demo"
 	"KWeb/framework/gin"
 	"KWeb/framework/middleware/static"
@@ -11,6 +12,6 @@ func Routes(r *gin.Engine) {
 
 	// 先去 ./dist 目录下查找文件是否存在，找到就使用文件服务提供服务
 	r.Use(static.Serve("/", static.LocalFile("./dist", false)))
-
+	r.Use(cors.Default())
 	demo.Register(r)
 }

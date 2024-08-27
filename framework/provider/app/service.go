@@ -32,9 +32,8 @@ func (app KApp) BaseFolder() string {
 	if app.baseFolder != "" {
 		return app.baseFolder
 	}
-
 	// 如果参数也没有，使用默认的当前路径
-	return util.GetExecDirectory()
+	return util.GetExecDirectory() + "/app"
 }
 
 // ConfigFolder  表示配置文件地址
